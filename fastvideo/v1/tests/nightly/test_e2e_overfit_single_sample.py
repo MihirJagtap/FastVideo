@@ -81,7 +81,7 @@ def run_preprocessing():
         "--samples_per_file", "1",
         "--flush_frequency", "1",
         "--video_length_tolerance_range", "5",
-        "--dataset", "t2v",
+        "--preprocess_task", "t2v",
     ]
 
     process = subprocess.run(cmd, check=True)
@@ -110,10 +110,10 @@ def run_training():
         "--dataloader_num_workers", "10",
         "--gradient_accumulation_steps", "1",
         "--max_train_steps", "901",
-        "--learning_rate", "1e-5",
+        "--learning_rate", "5e-5",
         "--mixed_precision", "bf16",
         "--checkpointing_steps", "6000",
-        "--validation_steps", "100",
+        "--validation_steps", "10",
         "--validation_sampling_steps", "50",
         "--log_validation",
         "--checkpoints_total_limit", "3",
@@ -141,7 +141,7 @@ def run_training():
 def test_e2e_overfit_single_sample():
     os.environ["WANDB_MODE"] = "online"
 
-    download_data()
+    # download_data()
     run_preprocessing()
     run_training()
 

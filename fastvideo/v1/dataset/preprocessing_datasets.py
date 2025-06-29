@@ -351,14 +351,31 @@ class ImageTransformStage(DatasetStage):
         """
         if not batch.is_image:
             return batch
+        assert False
+
+        torchvision_video, _, metadata = torchvision.io.read_video(
+            
+        video_path, output_format="TCHW")
+        video = torchvision_video[frame_indices]
+        video = self.transform(video)
+        video = rearrange(video, "t c h w -> c t h w")
+        video = video.to(torch.uint8)
+        assert video.dtype == torch.uint8
+
+        h, w = video.shape[-2:]
+        assert (
+            h / w <= 17 / 16 and h / w >= 8 / 16
+        ), f"Only videos with a ratio (h/w) less than 17/16 and more than 8/16 are supported. But video ({video_path}) found ratio is {round(h / w, 2)} with the shape of {video.shape}"
+
+        video = video.float() / 127.5 - 1.0
 
         image = Image.open(batch.path).convert("RGB")
         image = torch.from_numpy(np.array(image))
         image = rearrange(image, "h w c -> c h w").unsqueeze(0)
 
-        if self.transform_topcrop is not None:
-            image = self.transform_topcrop(image)
-        elif self.transform is not None:
+        # if self.transform_topcrop is not None:
+            # image = self.transform_topcrop(image)
+        if self.transform is not None:
             image = self.transform(image)
 
         image = image.transpose(0, 1)  # [1 C H W] -> [C 1 H W]

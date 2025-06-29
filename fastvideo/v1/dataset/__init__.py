@@ -1,4 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0
+import os
+
+from transformers import AutoTokenizer
 from torchvision import transforms
 from torchvision.transforms import Lambda
 
@@ -9,6 +12,7 @@ from fastvideo.v1.dataset.preprocessing_datasets import (
 from fastvideo.v1.dataset.transform import (CenterCropResizeVideo, Normalize255,
                                             TemporalRandomCrop)
 from fastvideo.v1.dataset.validation_dataset import ValidationDataset
+from fastvideo.v1.dataset.t2v_dataset import T2V_dataset
 
 
 def getdataset(args) -> VideoCaptionMergedDataset:
@@ -29,11 +33,21 @@ def getdataset(args) -> VideoCaptionMergedDataset:
         *resize_topcrop,
         norm_fun,
     ])
-    return VideoCaptionMergedDataset(data_merge_path=args.data_merge_path,
-                                     args=args,
-                                     transform=transform,
-                                     temporal_sample=temporal_sample,
-                                     transform_topcrop=transform_topcrop)
+    tokenizer_path = os.path.join(args.model_path, "tokenizer")
+    tokenizer = AutoTokenizer.from_pretrained(tokenizer_path,
+                                              cache_dir=args.cache_dir)
+    # if args.dataset == "t2v":
+    return T2V_dataset(args,
+                        transform=transform,
+                        temporal_sample=temporal_sample,
+                        tokenizer=tokenizer,
+                        transform_topcrop=transform_topcrop,
+                        start_idx=0)
+    # return VideoCaptionMergedDataset(data_merge_path=args.data_merge_path,
+    #                                  args=args,
+    #                                  transform=transform,
+    #                                  temporal_sample=temporal_sample,
+    #                                  transform_topcrop=transform_topcrop)
 
 
 __all__ = [
