@@ -71,6 +71,8 @@ class EncodingStage(PipelineStage):
         else:
             # assumes image is loaded from parquet file and used for validation
             image = image.transpose(1, 2)
+            # pass
+            # image = image.unsqueeze(2)
         logger.info("image: %s", image.shape)
         video_condition = torch.cat([
             image,

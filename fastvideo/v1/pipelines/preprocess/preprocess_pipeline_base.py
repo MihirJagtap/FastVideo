@@ -526,6 +526,12 @@ class BasePreprocessPipeline(ComposedPipelineBase):
                 if "video" in sample:
                     extra_features = self.preprocess_video(
                         sample["video"], height, width, fastvideo_args)
+                for key, value in extra_features.items():
+                    if isinstance(value, torch.Tensor):
+                        print(f"key: {key}, value: {value.shape}")
+                    else:
+                        print(f"key: {key}, value: {value}")
+                        # sample_extra_features[key] = value
 
             # Get extra features for this sample if needed
             sample_extra_features = {}
