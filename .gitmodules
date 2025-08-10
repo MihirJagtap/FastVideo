@@ -1,3 +1,6 @@
-[submodule "csrc/attn/tk"]
-	path = csrc/attn/tk
+[submodule "csrc/st_attn/tk"]
+	path = csrc/st_attn/tk
+	url = https://github.com/HazyResearch/ThunderKittens.git
+[submodule "csrc/vsa/tk"]
+	path = csrc/vsa/tk
 	url = https://github.com/HazyResearch/ThunderKittens.git
